@@ -10,16 +10,24 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:python-help-fetcher.helloWorld"
+        "onCommand:python-help-fetcher.getDocsOfSymbol"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "python-help-fetcher.helloWorld",
-				"title": "Hello World"
+				"command": "python-help-fetcher.getDocsOfSymbol",
+				"title": "Python Doc Fetcher: Open documentation of Symbol in a new browser window"
 			}
-		]
+		],
+		"keybindings": [
+			{
+			  "command": "python-help-fetcher.getDocsOfSymbol",
+			  "key": "shift+f1",
+			  "mac": "shift+f1",
+			  "when": "editorTextFocus"
+			}
+		  ]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
