@@ -1,19 +1,43 @@
+import { getVSCodeDownloadUrl } from "@vscode/test-electron/out/util";
 import child_process = require("child_process");
+import readline = require("readline");
+import * as vscode from "vscode";
 
-export function getFunctionAtPosition(file: string, line: number, column: number) {
-    return new Promise<string>((resolve, reject) => {
-        // TODO: make this not a fixed path
-        child_process.execFile("/home/thomas/Documents/python-help-fetcher/venv/bin/python3", [
-            "/home/thomas/Documents/python-help-fetcher/src/get_function_at_position.py", file, line.toString(), column.toString()
-        ], (error, stdout, stderr) => {
-            if (error !== null) {
-                reject(Error(`get_function_at_position failed.\nstderr:\n${stderr}`))
-            }
-            else {
-                resolve(stdout.trimEnd())
-            }
+
+const PYTHON_VENV = "/home/thomas/Documents/python-help-fetcher/venv/bin/python3"
+const PYTHON_SCRIPT = "/home/thomas/Documents/python-help-fetcher/src/get_function_at_position.py"
+
+export class HelpFetcher {
+    private fetcherProcess: child_process.ChildProcessWithoutNullStreams;
+    private readlineInterface: readline.Interface;
+    constructor() {
+        this.fetcherProcess = child_process.spawn(PYTHON_VENV, [PYTHON_SCRIPT]);
+        this.readlineInterface = readline.createInterface({input: this.fetcherProcess.stdout, output: this.fetcherProcess.stdin});
+        
+        const fetcherProcessStderrInterface = readline.createInterface({input: this.fetcherProcess.stderr});
+        fetcherProcessStderrInterface.on("line", line => {
+            vscode.window.showErrorMessage(`Stderr outputted ${line}`);
         })
-    })
+    }
+
+    public destroy() {
+        this.readlineInterface.close()
+        this.fetcherProcess.kill();
+    }
+
+    public async getFunctionAtPosition(file: string, line: number, column: number) {
+        return new Promise<string>((resolve, reject) => {
+            const inputObject = {
+                "file": file,
+                "line": line,
+                "column": column
+            }
+
+            this.readlineInterface.question(JSON.stringify(inputObject) + "\n", (answer: string) => {
+                resolve(JSON.parse(answer));
+            })
+        })
+    }
 }
 
 export function getDocWebPageFromSymbol(symbol_name: string) {
@@ -32,16 +56,16 @@ export function getDocWebPageFromSymbol(symbol_name: string) {
             // Handle built in functions and constants
             const python_constants = new Set(["False", "True", "None", "NotImplemented", "Ellipsis", "__debug__", "quit", "copyright", "credits", "license"]);
 
-            if (python_constants.has(symbol_parts[1])){
+            if (python_constants.has(symbol_parts[1])) {
                 return `https://docs.python.org/3/library/constants.html#${symbol_parts[1]}`
             }
-            else if(symbol_parts[1].endsWith("Exception") 
-                    || symbol_parts[1].endsWith("Error")
-                    || symbol_parts[1].endsWith("Exit")
-                    || symbol_parts[1].endsWith("Interrupt")){
+            else if (symbol_parts[1].endsWith("Exception")
+                || symbol_parts[1].endsWith("Error")
+                || symbol_parts[1].endsWith("Exit")
+                || symbol_parts[1].endsWith("Interrupt")) {
                 return `https://docs.python.org/3/library/exceptions.html#${symbol_parts[1]}`
             }
-            else{
+            else {
                 return `https://docs.python.org/3/library/functions.html#${symbol_parts[1]}`
             }
 
