@@ -17,7 +17,7 @@
     "commands": [
       {
         "command": "python-help-fetcher.getDocsOfSymbol",
-        "title": "Python Doc Fetcher: Open documentation of Symbol in a new browser window"
+        "title": "Python Doc Fetcher: Open documentation of symbol in a new browser window"
       }
     ],
     "keybindings": [
@@ -29,12 +29,14 @@
       }
     ]
   },
+  "extensionKind": [
+    "workspace"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
@@ -49,10 +51,5 @@
     "glob": "^7.1.7",
     "mocha": "^9.1.1",
     "typescript": "^4.4.3"
-  },
-  "dependencies": {
-    "execa": "^5.1.1",
-    "open": "^8.3.0",
-    "ts-node": "^10.2.1"
   }
 }

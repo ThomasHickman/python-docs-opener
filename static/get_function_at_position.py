@@ -1,8 +1,11 @@
 #!/bin/bash
 import sys
+from typing import Optional
 import jedi
 import json
 import traceback
+
+from jedi.api.classes import Name
 
 # In Python, sys.stdout becomes block buffered when it thinks it's not interactive. Running the
 # process though nodejs makes it think that it's not interactive, so we have to force a flush.
@@ -12,14 +15,16 @@ def stdout_write(message: str):
 def stderr_write(message: str):
     print(message, flush=True, file=sys.stderr)
 
-# TODO: get rid of this as I don't know whether this is exposed as a public API
-from jedi.api.classes import Name
-
-def get_function_at_position(file: str, line: int, column: int) -> str:
-    script = jedi.Script(path=file)
-
-    # NOTE: Jedi columns are 0 indexed, but we're using 1 indexed columns (because that makes more sense)
-    infered_function_names = script.infer(line=line, column=column - 1)
+def get_function_at_position(file: str, line: int, column: int, python_executable: Optional[str]) -> str:
+    if python_executable:
+        environment = jedi.create_environment(python_executable)
+        script = jedi.Script(path=file, environment=environment)
+    else:
+        script = jedi.Script(path=file)
+    
+    # NOTE: Jedi columns are 0 indexed, but we're using 1 indexed columns (because that makes more
+    # sense generally)
+    infered_function_names = script.goto(line=line, column=column - 1)
     if len(infered_function_names) == 0:
         return None
 
@@ -37,16 +42,19 @@ def entrypoint():
             line = input_json["line"]
             column = input_json["column"]
             file = input_json["file"]
+            python_executable = input_json.get("pythonExecutable")
 
-            stdout_write(json.dumps(get_function_at_position(file, line, column)))
+            stdout_write(json.dumps(get_function_at_position(file, line, column, python_executable)))
         except Exception:
             stderr_write(f"Input failed to be computed. Exception: ")
             stderr_write(traceback.format_exc())
 
             stdout_write("null")
 
-
-# test: {"line": 22, "column": 15, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py"}
+"""
+{"line": 5, "column": 29, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py", "pythonExecutable": "/home/thomas/Documents/python-help-fetcher/my/test-folder/venv/bin/python"}
+"""
+# test: {"line": 23, "column": 17, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py"}
 # test: {"line": 1, "column": 1, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py"}
 
 if __name__ == "__main__":

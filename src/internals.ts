@@ -1,23 +1,24 @@
-import { getVSCodeDownloadUrl } from "@vscode/test-electron/out/util";
 import child_process = require("child_process");
+import { builtInModules } from "./data";
 import readline = require("readline");
 import * as vscode from "vscode";
+import * as path from "path";
 
 
-const PYTHON_VENV = "/home/thomas/Documents/python-help-fetcher/venv/bin/python3"
-const PYTHON_SCRIPT = "/home/thomas/Documents/python-help-fetcher/src/get_function_at_position.py"
+const PYTHON_SCRIPT = path.join(path.dirname(__dirname), "static", "get_function_at_position.py")
 
 export class HelpFetcher {
     private fetcherProcess: child_process.ChildProcessWithoutNullStreams;
     private readlineInterface: readline.Interface;
-    constructor() {
-        this.fetcherProcess = child_process.spawn(PYTHON_VENV, [PYTHON_SCRIPT]);
+    constructor(pythonExecutable: string) {
+        this.fetcherProcess = child_process.spawn(pythonExecutable, [PYTHON_SCRIPT]);
         this.readlineInterface = readline.createInterface({input: this.fetcherProcess.stdout, output: this.fetcherProcess.stdin});
         
-        const fetcherProcessStderrInterface = readline.createInterface({input: this.fetcherProcess.stderr});
-        fetcherProcessStderrInterface.on("line", line => {
-            vscode.window.showErrorMessage(`Stderr outputted ${line}`);
-        })
+        // TODO: maybe report stderr here?
+        // const fetcherProcessStderrInterface = readline.createInterface({input: this.fetcherProcess.stderr});
+        // fetcherProcessStderrInterface.on("line", line => {
+        //     logs.append("stderr: " + line);
+        // });
     }
 
     public destroy() {
@@ -25,12 +26,16 @@ export class HelpFetcher {
         this.fetcherProcess.kill();
     }
 
-    public async getFunctionAtPosition(file: string, line: number, column: number) {
+    public async getFunctionAtPosition(file: string, line: number, column: number, pythonExecutable?: string) {
         return new Promise<string>((resolve, reject) => {
-            const inputObject = {
+            let inputObject = {
                 "file": file,
                 "line": line,
                 "column": column
+            }
+
+            if (pythonExecutable){
+                inputObject["pythonExecutable"] = pythonExecutable
             }
 
             this.readlineInterface.question(JSON.stringify(inputObject) + "\n", (answer: string) => {
@@ -47,9 +52,10 @@ export function getDocWebPageFromSymbol(symbol_name: string) {
      * @returns A string of the webpage if one can be found, otherwise `null`.
      */
     const symbol_parts = symbol_name.split(".");
+    const module_name = symbol_parts[0];
+    const non_module_path = symbol_parts.slice(1).join(".");
 
-    if (symbol_parts[0] === "builtins") {
-        const non_builtins_symbol_name = symbol_parts.slice(1).join(".");
+    if (module_name === "builtins") {
         // TODO: the constants/exceptions/functions handling is not complete and bit brittle. We could make this better.
 
         if (symbol_parts.length == 2) {
@@ -76,17 +82,12 @@ export function getDocWebPageFromSymbol(symbol_name: string) {
         const stdtypes = new Set(["int", "float", "complex", "list", "tuple", "range", "str", "bytes, bytearray", "memoryview", "set", "frozenset", "dict"]);
 
         if (stdtypes.has(symbol_parts[1])) {
-            return `https://docs.python.org/3/library/stdtypes.html#${non_builtins_symbol_name}`
+            return `https://docs.python.org/3/library/stdtypes.html#${non_module_path}`
         }
-
-        const module_name = symbol_parts[1];
-
-        return `https://docs.python.org/3/library/${module_name}.html#${non_builtins_symbol_name}`
-
     }
-    else {
-        console.log(`Trying to query symbol ${symbol_name} that is not a built-in.`)
-
-        return null;
+    else if (builtInModules.has(module_name)){
+        return `https://docs.python.org/3/library/${module_name}.html#${symbol_name}`
     }
+
+    return null;
 }
