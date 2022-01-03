@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import {getDocWebPageFromSymbol, HelpFetcher} from "./internals";
+import {getPythonWebPageFromSymbol, getWebPageFromSymbolUsingSettings, HelpFetcher} from "./internals";
 import * as fs_p from "fs/promises";
 import * as fs from "fs";
 import * as path from "path";
@@ -96,19 +96,27 @@ export function activate(context: vscode.ExtensionContext) {
                     `Unable to get the documentation for the selected symbol. ` + 
                     `Please check the input file for errors.`
                 );
+
+                return;
             }
             else{
-                const webpage = getDocWebPageFromSymbol(symbolAtPosition);
+                let webpage = getPythonWebPageFromSymbol(symbolAtPosition);
 
-                if (webpage){
-                    await vscode.env.openExternal(vscode.Uri.parse(webpage));
+                if (!webpage){
+                    const additionalLibaries: object = vscode.workspace.getConfiguration().get("python-help-fetcher.additionalLibraryDocsMappings") ?? {};
+                    
+                    webpage = getWebPageFromSymbolUsingSettings(symbolAtPosition, additionalLibaries);
+
+                    if (!webpage){
+                        vscode.window.showWarningMessage(
+                            `Unable to get the documentation for "${symbolAtPosition}". ` + 
+                            `Fetching documentation for the library that provides this symbol may not be supported.`
+                        );
+
+                        return;
+                    }
                 }
-                else{
-                    vscode.window.showWarningMessage(
-                        `Unable to get the documentation for "${symbolAtPosition}". ` + 
-                        `Fetching documentation for the library that provides this symbol may not be supported.`
-                    );
-                }
+                await vscode.env.openExternal(vscode.Uri.parse(webpage));
             }
 
 

@@ -1,7 +1,6 @@
 import child_process = require("child_process");
 import { builtInModules } from "./data";
 import readline = require("readline");
-import * as vscode from "vscode";
 import * as path from "path";
 
 
@@ -45,7 +44,22 @@ export class HelpFetcher {
     }
 }
 
-export function getDocWebPageFromSymbol(symbol_name: string) {
+export function getWebPageFromSymbolUsingSettings(symbol_name: string, setting_object: object): string | null{
+    const symbol_parts = symbol_name.split(".");
+    const module_name = symbol_parts[0];
+
+    if ((new Set(Object.keys(setting_object))).has(module_name)){
+        const webpageTemplate: string = setting_object[module_name];
+
+        return webpageTemplate.replace("${symbol_name}", symbol_name)
+                              .replace("${module_name}", module_name);
+    }
+    else{
+        return null;
+    }
+}
+
+export function getPythonWebPageFromSymbol(symbol_name: string) {
     /**
      * Gets the helptext webpage for the given symbol name.
      * 

@@ -27,7 +27,17 @@
         "mac": "shift+f1",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Python Help Fetcher",
+      "properties": {
+        "python-help-fetcher.additionalLibraryDocsMappings": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Specifies additional mappings from libraries to the online documentation. You can use the variables `${symbolName}` and TODO: fill this in"
+        }
+      }
+    }
   },
   "extensionKind": [
     "workspace"
