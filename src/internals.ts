@@ -26,7 +26,7 @@ export class HelpFetcher {
     }
 
     public async getFunctionAtPosition(file: string, line: number, column: number, pythonExecutable?: string) {
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<string | null>((resolve, reject) => {
             let inputObject = {
                 "file": file,
                 "line": line,
@@ -59,15 +59,81 @@ export function getWebPageFromSymbolUsingSettings(symbol_name: string, setting_o
     }
 }
 
+// TODO: I have found that this can get fed a `null` - we should check how this can happen
+// TODO: xml.parsers.expat maps to pyexpat :'(
+// urllib.response.addinfourl is at https://docs.python.org/3/library/urllib.request.html#urllib.response.addinfourl
+// TODO: hard coding this is a bit hacky - we might be able to do this automatically by scraping the list of module pages
+const SPECIAL_CASE_PAGES = new Map([
+    ["xml.parsers.expat", "pyexpat"],
+    ["urllib.response", "urllib.request"]
+]);
+
+const SUBMODULES_WITH_SEPARATE_PAGES = [
+    "collections.abc",
+    "os.path",
+    "logging.config",
+    "logging.handlers",
+    "curses.ascii",
+    "curses.panel",
+    "multiprocessing.shared_memory",
+    "concurrent.futures",
+    "html.parser",
+    "html.entities",
+    "xml.etree.elementtree",
+    "xml.dom",
+    "xml.dom.minidom",
+    "xml.dom.pulldom",
+    "xml.sax",
+    "xml.sax.handler",
+    "xml.sax.utils",
+    "xml.sax.reader",
+    "urllib.request",
+    "urllib.parse",
+    "urllib.error",
+    "urllib.robotparser",
+    "http.client",
+    "http.server",
+    "http.cookies",
+    "http.cookiejar",
+    "xmlrpc.server",
+    "tkinter.colorchooser",
+    "tkinter.font",
+    "tkinter.messagebox",
+    "tkinter.scrolledtext",
+    "tkinter.dnd",
+    "tkinter.ttk",
+    "tkinter.tix",
+    "unittest.mock"
+]
+
 export function getPythonWebPageFromSymbol(symbol_name: string) {
     /**
      * Gets the helptext webpage for the given symbol name.
      * 
      * @returns A string of the webpage if one can be found, otherwise `null`.
      */
+    let module_name: string;
+    let non_module_path: string;
+
     const symbol_parts = symbol_name.split(".");
-    const module_name = symbol_parts[0];
-    const non_module_path = symbol_parts.slice(1).join(".");
+
+    const submodule_with_separate_path = SUBMODULES_WITH_SEPARATE_PAGES.find(submodule => symbol_name.startsWith(submodule));
+    if (submodule_with_separate_path !== undefined) {
+        module_name = submodule_with_separate_path;
+        non_module_path = symbol_parts.slice(1).join(".");
+    }
+    else {
+        const special_case_submodule = Array.from(SPECIAL_CASE_PAGES.keys()).find(submodule => symbol_name.startsWith(submodule));
+
+        if (special_case_submodule !== undefined){
+            module_name = special_case_submodule;
+            non_module_path = symbol_parts.slice(1).join(".");
+        }
+        else{
+            module_name = symbol_parts[0];
+            non_module_path = symbol_parts.slice(1).join(".");
+        }
+    }
 
     if (module_name === "builtins") {
         // TODO: the constants/exceptions/functions handling is not complete and bit brittle. We could make this better.
