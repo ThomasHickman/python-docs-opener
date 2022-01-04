@@ -2,7 +2,7 @@
   "name": "python-help-fetcher",
   "displayName": "python-help-fetcher",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.61.0"
   },
@@ -33,7 +33,9 @@
       "properties": {
         "python-help-fetcher.additionalLibraryDocsMappings": {
           "type": "object",
-          "additionalProperties": { "type": "string" },
+          "additionalProperties": {
+            "type": "string"
+          },
           "description": "Specifies additional mappings from libraries to the online documentation. You can use the variables `${symbolName}` and TODO: fill this in"
         }
       }
