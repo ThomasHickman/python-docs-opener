@@ -106,12 +106,48 @@ const SUBMODULES_WITH_SEPARATE_PAGES = [
     "unittest.mock"
 ]
 
+function getSpecialCaseMapping(originalSymbol: string) {
+    const symbol_parts = originalSymbol.split(".");
+
+    if (originalSymbol.startsWith("typing.IO")){
+        if ((new Set(["readinto", "read", "readall", "write"])).has(symbol_parts[2])){
+            return `https://docs.python.org/3/library/io.html#io.RawIOBase.${symbol_parts[2]}`
+        }
+        else if ((new Set(["read1", "readinto", "readinto1"])).has(symbol_parts[2])){
+            return `https://docs.python.org/3/library/io.html#io.BufferedIOBase.${symbol_parts[2]}`
+        }
+        else if ((new Set(["detach", "encoding", "errors", "newlines", "readline"])).has(symbol_parts[2])){
+            return `https://docs.python.org/3/library/io.html#io.TextIOBase.${symbol_parts[2]}`
+        }
+        else {
+            return `https://docs.python.org/3/library/io.html#io.IOBase.${symbol_parts[2]}`
+        }
+    }
+    else if (originalSymbol.startsWith("builtins.list")){
+        return "https://docs.python.org/3/tutorial/datastructures.html#more-on-lists"
+    }
+    else if (originalSymbol.startsWith("builtins.tuple")){
+        return "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations"
+    }
+    else if (originalSymbol.startsWith("builtins.set")){
+        // `set` shares a section with `frozenset`, which is called `frozenset`
+        return `https://docs.python.org/3/library/stdtypes.html#frozenset.${symbol_parts[2]}`
+    }
+    
+    return null;
+}
+
 export function getPythonWebPageFromSymbol(symbol_name: string) {
     /**
      * Gets the helptext webpage for the given symbol name.
      * 
      * @returns A string of the webpage if one can be found, otherwise `null`.
      */
+    const specialCaseMapping = getSpecialCaseMapping(symbol_name);
+    if (specialCaseMapping){
+        return specialCaseMapping
+    }
+
     let module_name: string;
     let non_module_path: string;
 
@@ -165,7 +201,7 @@ export function getPythonWebPageFromSymbol(symbol_name: string) {
             return `https://docs.python.org/3/library/stdtypes.html#${non_module_path}`
         }
     }
-    else if (builtInModules.has(module_name)){
+    else if (builtInModules.has(module_name.split(".")[0])){
         return `https://docs.python.org/3/library/${module_name}.html#${symbol_name}`
     }
 

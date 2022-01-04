@@ -12,8 +12,9 @@ describe("symbol fetching", () => {
         const tempFolder = await fs_p.mkdtemp(path.join(os.tmpdir(), "getWebpageFromString"));
         const testFile = path.join(tempFolder, "testFile");
         await fs_p.writeFile(testFile, str);
-
+        
         const functionAtPosition = await helpFetcher.getFunctionAtPosition(testFile, line, column);
+        console.log(`Found function ${functionAtPosition}`)
 
         if (functionAtPosition)
             return getPythonWebPageFromSymbol(functionAtPosition);
@@ -42,15 +43,22 @@ describe("symbol fetching", () => {
     })
 
     it("List.insert", async () => {
-        // TODO: think about?
-        // assert.strictEqual(await getWebpageFromString("[].insert", 1, 5), "https://docs.python.org/3/tutorial/datastructures.html?highlight=list%20insert#more-on-lists");
+        assert.strictEqual(await getWebpageFromString("[].insert", 1, 5), "https://docs.python.org/3/tutorial/datastructures.html#more-on-lists");
+    })
+
+    it("Tuple.count", async () => {
+        assert.strictEqual(await getWebpageFromString("().count", 1, 5), "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations");
     })
 
     it("Set.update", async () => {
         assert.strictEqual(await getWebpageFromString("set().update", 1, 8), "https://docs.python.org/3/library/stdtypes.html#frozenset.update");
     })
 
+    it("IO.writelines", async () => {
+        assert.strictEqual(await getWebpageFromString("open('file').writelines([])", 1, 15), "https://docs.python.org/3/library/io.html#io.IOBase.writelines");
+    })
+
     it("unittest.mock", async () => {
         assert.strictEqual(await getWebpageFromString("from unittest import mock; mock.Mock", 1, 34), "https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock");
     })
-})
+}).timeout(10_000)

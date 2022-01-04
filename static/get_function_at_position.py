@@ -52,7 +52,7 @@ def entrypoint():
             stdout_write("null")
 
 """
-{"line": 5, "column": 29, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py", "pythonExecutable": "/home/thomas/Documents/python-help-fetcher/my/test-folder/venv/bin/python"}
+{"line": 42, "column": 7, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py", "pythonExecutable": "/home/thomas/Documents/python-help-fetcher/my/test-folder/venv/bin/python"}
 """
 # test: {"line": 23, "column": 17, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py"}
 # test: {"line": 1, "column": 1, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py"}
