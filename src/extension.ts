@@ -23,7 +23,13 @@ export function runProcess(name: string, args: string[], options: child_process.
 }
 
 export async function getPythonExecutableWithJedi(venvFolder: string): Promise<string> {
-    const potentialPythonPath = path.join(venvFolder, "bin", "python3");
+    let potentialPythonPath: string;
+    if (process.platform == "win32"){
+        potentialPythonPath = path.join(venvFolder, "Scripts", "python.exe");
+    }
+    else{
+        potentialPythonPath = path.join(venvFolder, "bin", "python3");
+    }
 
     if (await fs_p.access(potentialPythonPath, fs.constants.F_OK).then(_ => true).catch(_ => false)) {
         const testCommand = await runProcess(potentialPythonPath, ["-c", "import jedi"]);
@@ -38,14 +44,34 @@ export async function getPythonExecutableWithJedi(venvFolder: string): Promise<s
     }
     else {
         // This should error with the exit code
-        const virtualEnvProcess = await runProcess("virtualenv", [venvFolder]);
+        let pythonCommand: string;
+        if((await runProcess("python", ["-c", "import sys; assert sys.version_info[0] == 3"])).exitCode == 0){
+            pythonCommand = "python";
+        }
+        else if((await runProcess("python3", ["-c", "import sys; assert sys.version_info[0] == 3"])).exitCode == 0){
+            pythonCommand = "python";
+        }
+        else{
+            const errorMessage = `Cannot find a Python 3 executable. Check that you have Python 3 in your path.`;
+            
+            vscode.window.showErrorMessage(errorMessage);
+            throw Error(errorMessage);
+        }
+
+        const virtualEnvProcess = await runProcess(pythonCommand, ["-m", "virtualenv", venvFolder]);
         if (virtualEnvProcess.exitCode != 0) {
-            vscode.window.showErrorMessage(`Creating a virtualenv failed. stderr: ${virtualEnvProcess.stderr?.read()}`)
+            const errorMessage = `Creating a virtualenv failed. stderr: ${virtualEnvProcess.stderr?.read()}`;
+
+            vscode.window.showErrorMessage(errorMessage);
+            throw Error(errorMessage);
         }
 
         const jediInstalled = await runProcess(potentialPythonPath, ["-m", "pip", "install", "jedi~=0.18"]);
         if (jediInstalled.exitCode != 0) {
-            vscode.window.showErrorMessage(`Running "pip install jedi" failed. stderr: ${jediInstalled.stderr?.read()}`)
+            const errorMessage = `Running "pip install jedi" failed. stderr: ${jediInstalled.stderr?.read()}`;
+            
+            vscode.window.showErrorMessage(errorMessage);
+            throw Error(errorMessage);
         }
 
         return potentialPythonPath;

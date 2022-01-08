@@ -6,7 +6,7 @@ import os = require('os');
 import * as extension from '../../extension';
 
 
-xdescribe("python environment management", () => {
+describe("python environment management", () => {
     let tempDir: string;
 
     beforeEach(async () => {
