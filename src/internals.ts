@@ -2,6 +2,7 @@ import child_process = require("child_process");
 import { builtInModules } from "./data";
 import readline = require("readline");
 import * as path from "path";
+import * as vscode from "vscode";
 
 
 const PYTHON_SCRIPT = path.join(path.dirname(__dirname), "static", "get_function_at_position.py")
@@ -35,7 +36,7 @@ export class HelpFetcher {
         this.fetcherProcess.kill();
     }
 
-    public async getFunctionAtPosition(file: string, line: number, column: number, pythonExecutable?: string) {
+    public async getFunctionAtPosition(file: string, line: number, column: number, pythonExecutable?: string, fileText?: string) {
         return new Promise<string | null>((resolve, reject) => {
             let inputObject = {
                 "file": file,
@@ -45,6 +46,10 @@ export class HelpFetcher {
 
             if (pythonExecutable){
                 inputObject["pythonExecutable"] = pythonExecutable
+            }
+
+            if(fileText){
+                inputObject["fileText"] = fileText;
             }
 
             this.readlineInterface.question(JSON.stringify(inputObject) + "\n", (answer: string) => {

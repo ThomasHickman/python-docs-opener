@@ -113,7 +113,8 @@ export function activate(context: vscode.ExtensionContext) {
                 document.fileName,
                 selection.active.line + 1,
                 selection.active.character + 1,
-                pythonPath
+                pythonPath,
+                document.getText(),
             );
             if (!symbolAtPosition){
                 vscode.window.showWarningMessage(
