@@ -1,14 +1,21 @@
 {
   "name": "python-docs-fetcher",
-  "displayName": "python-docs-fetcher",
-  "description": "",
+  "displayName": "Python Docs Fetcher",
+  "description": "Open documentation for the current symbol under the cursor in the default web browser",
   "version": "0.2.0",
   "engines": {
     "vscode": "^1.61.0"
   },
   "categories": [
+    "Programming Languages",
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ThomasHickman/python-docs-fetcher.git"
+  },
+  "homepage": "https://github.com/ThomasHickman/python-docs-fetcher",
+  "keywords": ["Python", "Documentation", "Browser"],
   "activationEvents": [
     "onCommand:pythonDocsFetcher.getDocsOfSymbol"
   ],
@@ -28,6 +35,7 @@
         "when": "editorTextFocus"
       }
     ],
+    "files": ["src", "static", "out"],
     "configuration": {
       "title": "Python Docs Fetcher",
       "properties": {
@@ -48,7 +56,6 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
