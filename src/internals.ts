@@ -66,8 +66,7 @@ export function getWebPageFromSymbolUsingSettings(symbol_name: string, setting_o
     if ((new Set(Object.keys(setting_object))).has(moduleName)){
         const webpageTemplate: string = setting_object[moduleName];
 
-        return webpageTemplate.replace("${symbol_name}", symbol_name)
-                              .replace("${module_name}", moduleName);
+        return webpageTemplate.replace("${symbol_name}", symbol_name);
     }
     else{
         return null;

@@ -10,33 +10,33 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:python-docs-fetcher.getDocsOfSymbol"
+    "onCommand:pythonDocsFetcher.getDocsOfSymbol"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "python-docs-fetcher.getDocsOfSymbol",
-        "title": "Python Doc Fetcher: Open documentation of symbol in a new browser window"
+        "command": "pythonDocsFetcher.getDocsOfSymbol",
+        "title": "Python Docs Fetcher: Open Documentation of Symbol in Browser Window"
       }
     ],
     "keybindings": [
       {
-        "command": "python-docs-fetcher.getDocsOfSymbol",
+        "command": "pythonDocsFetcher.getDocsOfSymbol",
         "key": "shift+f1",
         "mac": "shift+f1",
         "when": "editorTextFocus"
       }
     ],
     "configuration": {
-      "title": "Python Help Fetcher",
+      "title": "Python Docs Fetcher",
       "properties": {
-        "python-docs-fetcher.additionalLibraryDocsMappings": {
+        "pythonDocsFetcher.additionalLibraryToDocsMappings": {
           "type": "object",
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Specifies additional mappings from libraries to the online documentation. You can use the variables `${symbolName}` and TODO: fill this in"
+          "markdownDescription": "Specifies additional mappings from library names to the online documentation URL.\n\nYou can use the variable `${symbol_name}` to denote the full symbol name. For example, `example.com/docs.html#${symbol_name}` will open `example.com/docs.html#one.two.three` for the symbol `one.two.three`."
         }
       }
     }
