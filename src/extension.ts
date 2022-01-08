@@ -49,7 +49,7 @@ export async function getPythonExecutableWithJedi(venvFolder: string): Promise<s
             pythonCommand = "python";
         }
         else if((await runProcess("python3", ["-c", "import sys; assert sys.version_info[0] == 3"])).exitCode == 0){
-            pythonCommand = "python";
+            pythonCommand = "python3";
         }
         else{
             const errorMessage = `Cannot find a Python 3 executable. Check that you have Python 3 in your path.`;
