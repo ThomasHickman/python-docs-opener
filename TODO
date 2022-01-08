@@ -1,4 +1,5 @@
 ✔ Make sure all user error paths are correct @done(21-11-20 17:54)
+☐ Make sure that the tool can be used in unsaved files.
 ☐ Finish the README
 ☐ Clean up package.json
 ☐ Clean up the code

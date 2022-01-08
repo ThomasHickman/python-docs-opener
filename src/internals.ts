@@ -126,7 +126,7 @@ function getSpecialCaseMapping(originalSymbol: string) {
     else if (originalSymbol.startsWith("builtins.list")){
         return "https://docs.python.org/3/tutorial/datastructures.html#more-on-lists"
     }
-    else if (originalSymbol.startsWith("builtins.tuple")){
+    else if (originalSymbol.startsWith("builtins.tuple") || originalSymbol.startsWith("builtins.range")){
         return "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations"
     }
     else if (originalSymbol.startsWith("builtins.set")){
