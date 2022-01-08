@@ -1,20 +1,20 @@
 import * as assert from 'assert';
-import * as fs_p from "fs/promises";
+import * as fsPromise from "fs/promises";
 import path = require('path');
 import os = require('os');
 
 import * as extension from '../../extension';
 
 
-xdescribe("python environment management", () => {
+describe("python environment management", () => {
     let tempDir: string;
 
     beforeEach(async () => {
-        tempDir = await fs_p.mkdtemp(path.join(os.tmpdir(), "envManagementTest"));
+        tempDir = await fsPromise.mkdtemp(path.join(os.tmpdir(), "envManagementTest"));
     })
 
     afterEach(() => {
-        fs_p.rm(tempDir, { recursive: true, force: true });
+        fsPromise.rm(tempDir, { recursive: true, force: true });
     })
 
     it("a test environment can be created in a blank folder", async () => {

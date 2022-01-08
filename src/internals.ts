@@ -60,14 +60,14 @@ export class HelpFetcher {
 }
 
 export function getWebPageFromSymbolUsingSettings(symbol_name: string, setting_object: object): string | null{
-    const symbol_parts = symbol_name.split(".");
-    const module_name = symbol_parts[0];
+    const symbolParts = symbol_name.split(".");
+    const moduleName = symbolParts[0];
 
-    if ((new Set(Object.keys(setting_object))).has(module_name)){
-        const webpageTemplate: string = setting_object[module_name];
+    if ((new Set(Object.keys(setting_object))).has(moduleName)){
+        const webpageTemplate: string = setting_object[moduleName];
 
         return webpageTemplate.replace("${symbol_name}", symbol_name)
-                              .replace("${module_name}", module_name);
+                              .replace("${module_name}", moduleName);
     }
     else{
         return null;
@@ -122,24 +122,24 @@ const SUBMODULES_WITH_SEPARATE_PAGES = [
 ]
 
 function getSpecialCaseMapping(originalSymbol: string) {
-    const symbol_parts = originalSymbol.split(".");
-    const lastSymbolPart = symbol_parts[symbol_parts.length - 1];
+    const symbolParts = originalSymbol.split(".");
+    const lastSymbolPart = symbolParts[symbolParts.length - 1];
 
-    if (symbol_parts[0] == "__import_system__") {
-        return `https://docs.python.org/3/reference/import.html#${symbol_parts[1].slice(2)}`
+    if (symbolParts[0] == "__import_system__") {
+        return `https://docs.python.org/3/reference/import.html#${symbolParts[1].slice(2)}`
     }
     else if (originalSymbol.startsWith("typing.IO")){
-        if ((new Set(["readinto", "read", "readall", "write"])).has(symbol_parts[2])){
-            return `https://docs.python.org/3/library/io.html#io.RawIOBase.${symbol_parts[2]}`
+        if ((new Set(["readinto", "read", "readall", "write"])).has(symbolParts[2])){
+            return `https://docs.python.org/3/library/io.html#io.RawIOBase.${symbolParts[2]}`
         }
-        else if ((new Set(["read1", "readinto", "readinto1"])).has(symbol_parts[2])){
-            return `https://docs.python.org/3/library/io.html#io.BufferedIOBase.${symbol_parts[2]}`
+        else if ((new Set(["read1", "readinto", "readinto1"])).has(symbolParts[2])){
+            return `https://docs.python.org/3/library/io.html#io.BufferedIOBase.${symbolParts[2]}`
         }
-        else if ((new Set(["detach", "encoding", "errors", "newlines", "readline"])).has(symbol_parts[2])){
-            return `https://docs.python.org/3/library/io.html#io.TextIOBase.${symbol_parts[2]}`
+        else if ((new Set(["detach", "encoding", "errors", "newlines", "readline"])).has(symbolParts[2])){
+            return `https://docs.python.org/3/library/io.html#io.TextIOBase.${symbolParts[2]}`
         }
         else {
-            return `https://docs.python.org/3/library/io.html#io.IOBase.${symbol_parts[2]}`
+            return `https://docs.python.org/3/library/io.html#io.IOBase.${symbolParts[2]}`
         }
     }
     else if (originalSymbol.startsWith("builtins.list")){
@@ -150,7 +150,7 @@ function getSpecialCaseMapping(originalSymbol: string) {
     }
     else if (originalSymbol.startsWith("builtins.set")){
         // `set` shares a section with `frozenset`, which is called `frozenset`
-        return `https://docs.python.org/3/library/stdtypes.html#frozenset.${symbol_parts[2]}`
+        return `https://docs.python.org/3/library/stdtypes.html#frozenset.${symbolParts[2]}`
     }
     else if (lastSymbolPart.startsWith("__") && lastSymbolPart.endsWith("__")) {
         if ((new Set(["__instancecheck__", "__subclasscheck__"]).has(lastSymbolPart))){
@@ -176,47 +176,47 @@ export function getPythonWebPageFromSymbol(symbol_name: string) {
         return specialCaseMapping
     }
 
-    let module_name: string;
-    let non_module_path: string;
+    let moduleName: string;
+    let nonModulePath: string;
 
-    const symbol_parts = symbol_name.split(".");
+    const symbolParts = symbol_name.split(".");
 
-    const submodule_with_separate_path = SUBMODULES_WITH_SEPARATE_PAGES.find(submodule => symbol_name.startsWith(submodule));
-    if (submodule_with_separate_path !== undefined) {
-        module_name = submodule_with_separate_path;
-        non_module_path = symbol_parts.slice(1).join(".");
+    const submoduleWithSeparatePath = SUBMODULES_WITH_SEPARATE_PAGES.find(submodule => symbol_name.startsWith(submodule));
+    if (submoduleWithSeparatePath !== undefined) {
+        moduleName = submoduleWithSeparatePath;
+        nonModulePath = symbolParts.slice(1).join(".");
     }
     else {
-        const special_case_submodule = Array.from(SPECIAL_CASE_PAGES.keys()).find(submodule => symbol_name.startsWith(submodule));
+        const specialCaseSubmodule = Array.from(SPECIAL_CASE_PAGES.keys()).find(submodule => symbol_name.startsWith(submodule));
 
-        if (special_case_submodule !== undefined){
-            module_name = special_case_submodule;
-            non_module_path = symbol_parts.slice(1).join(".");
+        if (specialCaseSubmodule !== undefined){
+            moduleName = specialCaseSubmodule;
+            nonModulePath = symbolParts.slice(1).join(".");
         }
         else{
-            module_name = symbol_parts[0];
-            non_module_path = symbol_parts.slice(1).join(".");
+            moduleName = symbolParts[0];
+            nonModulePath = symbolParts.slice(1).join(".");
         }
     }
 
-    if (module_name === "builtins") {
+    if (moduleName === "builtins") {
         // TODO: the constants/exceptions/functions handling is not complete and bit brittle. We could make this better.
 
-        if (symbol_parts.length == 2) {
+        if (symbolParts.length == 2) {
             // Handle built in functions and constants
             const python_constants = new Set(["False", "True", "None", "NotImplemented", "Ellipsis", "__debug__", "quit", "copyright", "credits", "license"]);
 
-            if (python_constants.has(symbol_parts[1])) {
-                return `https://docs.python.org/3/library/constants.html#${symbol_parts[1]}`
+            if (python_constants.has(symbolParts[1])) {
+                return `https://docs.python.org/3/library/constants.html#${symbolParts[1]}`
             }
-            else if (symbol_parts[1].endsWith("Exception")
-                || symbol_parts[1].endsWith("Error")
-                || symbol_parts[1].endsWith("Exit")
-                || symbol_parts[1].endsWith("Interrupt")) {
-                return `https://docs.python.org/3/library/exceptions.html#${symbol_parts[1]}`
+            else if (symbolParts[1].endsWith("Exception")
+                || symbolParts[1].endsWith("Error")
+                || symbolParts[1].endsWith("Exit")
+                || symbolParts[1].endsWith("Interrupt")) {
+                return `https://docs.python.org/3/library/exceptions.html#${symbolParts[1]}`
             }
             else {
-                return `https://docs.python.org/3/library/functions.html#${symbol_parts[1]}`
+                return `https://docs.python.org/3/library/functions.html#${symbolParts[1]}`
             }
 
             throw Error("AssertionError: all paths here should return.")
@@ -225,12 +225,12 @@ export function getPythonWebPageFromSymbol(symbol_name: string) {
         // TODO: find a way to represent from here onwards: https://docs.python.org/3/library/stdtypes.html#contextmanager.__enter__
         const stdtypes = new Set(["int", "float", "complex", "list", "tuple", "range", "str", "bytes, bytearray", "memoryview", "set", "frozenset", "dict"]);
 
-        if (stdtypes.has(symbol_parts[1])) {
-            return `https://docs.python.org/3/library/stdtypes.html#${non_module_path}`
+        if (stdtypes.has(symbolParts[1])) {
+            return `https://docs.python.org/3/library/stdtypes.html#${nonModulePath}`
         }
     }
-    else if (builtInModules.has(module_name.split(".")[0])){
-        return `https://docs.python.org/3/library/${module_name}.html#${symbol_name}`
+    else if (builtInModules.has(moduleName.split(".")[0])){
+        return `https://docs.python.org/3/library/${moduleName}.html#${symbol_name}`
     }
 
     return null;

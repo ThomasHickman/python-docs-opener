@@ -1,9 +1,9 @@
 ✔ Make sure all user error paths are correct @done(21-11-20 17:54)
-☐ Make sure that the tool can be used in unsaved files.
+✔ Make sure that the tool can be used in unsaved files. @done(22-01-08 15:42)
 ☐ Finish the README
 ☐ Clean up package.json
 ☐ Clean up the code
-☐ Tests?
+✔ Tests? @done(22-01-08 15:42)
 ☐ read through [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
 ☐ Publish to GitHub
 ☐ Consider documenting the Icon from uxwing

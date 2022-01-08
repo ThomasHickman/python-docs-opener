@@ -1,6 +1,6 @@
 {
-  "name": "python-help-fetcher",
-  "displayName": "python-help-fetcher",
+  "name": "python-docs-fetcher",
+  "displayName": "python-docs-fetcher",
   "description": "",
   "version": "0.2.0",
   "engines": {
@@ -10,19 +10,19 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:python-help-fetcher.getDocsOfSymbol"
+    "onCommand:python-docs-fetcher.getDocsOfSymbol"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "python-help-fetcher.getDocsOfSymbol",
+        "command": "python-docs-fetcher.getDocsOfSymbol",
         "title": "Python Doc Fetcher: Open documentation of symbol in a new browser window"
       }
     ],
     "keybindings": [
       {
-        "command": "python-help-fetcher.getDocsOfSymbol",
+        "command": "python-docs-fetcher.getDocsOfSymbol",
         "key": "shift+f1",
         "mac": "shift+f1",
         "when": "editorTextFocus"
@@ -31,7 +31,7 @@
     "configuration": {
       "title": "Python Help Fetcher",
       "properties": {
-        "python-help-fetcher.additionalLibraryDocsMappings": {
+        "python-docs-fetcher.additionalLibraryDocsMappings": {
           "type": "object",
           "additionalProperties": {
             "type": "string"

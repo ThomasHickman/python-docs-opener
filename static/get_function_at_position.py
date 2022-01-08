@@ -62,12 +62,5 @@ def entrypoint():
 
             stdout_write("null")
 
-"""
-{"line": 42, "column": 7, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py", "pythonExecutable": "/home/thomas/Documents/python-help-fetcher/my/test-folder/venv/bin/python"}
-{"line": 44, "column": 4, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py", "pythonExecutable": "/home/thomas/Documents/python-help-fetcher/my/test-folder/venv/bin/python"}
-"""
-# test: {"line": 23, "column": 17, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py"}
-# test: {"line": 1, "column": 1, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py"}
-
 if __name__ == "__main__":
     entrypoint()

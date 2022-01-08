@@ -1,4 +1,4 @@
-# python-help-fetcher
+# python-docs-fetcher
 
 Launches the documentation for the symbol currently selected in the web browser.
 

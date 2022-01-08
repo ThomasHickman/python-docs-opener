@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import {getPythonWebPageFromSymbol, getWebPageFromSymbolUsingSettings, HelpFetcher} from "./internals";
-import * as fs_p from "fs/promises";
+import * as fsPromise from "fs/promises";
 import * as fs from "fs";
 import * as path from "path";
 import * as child_process from "child_process"
@@ -31,11 +31,11 @@ export async function getPythonExecutableWithJedi(venvFolder: string): Promise<s
         potentialPythonPath = path.join(venvFolder, "bin", "python3");
     }
 
-    if (await fs_p.access(potentialPythonPath, fs.constants.F_OK).then(_ => true).catch(_ => false)) {
+    if (await fsPromise.access(potentialPythonPath, fs.constants.F_OK).then(_ => true).catch(_ => false)) {
         const testCommand = await runProcess(potentialPythonPath, ["-c", "import jedi"]);
         // If the folder is in an invalid state (maybe from before where there was no internet), remove it and retry.
         if (testCommand.exitCode != 0){
-            await fs_p.rm(venvFolder, {recursive: true, force: true});
+            await fsPromise.rm(venvFolder, {recursive: true, force: true});
             return await getPythonExecutableWithJedi(venvFolder);
         }
         
@@ -99,7 +99,7 @@ async function getHelpFetcher(context: vscode.ExtensionContext){
 export function activate(context: vscode.ExtensionContext) {
     helpFetcherPromise = getHelpFetcher(context);
 
-    let disposable = vscode.commands.registerCommand('python-help-fetcher.getDocsOfSymbol', async () => {
+    let disposable = vscode.commands.registerCommand('python-docs-fetcher.getDocsOfSymbol', async () => {
         const editor = vscode.window.activeTextEditor;
         const helpFetcher = await helpFetcherPromise;
 
@@ -128,7 +128,7 @@ export function activate(context: vscode.ExtensionContext) {
                 let webpage = getPythonWebPageFromSymbol(symbolAtPosition);
 
                 if (!webpage){
-                    const additionalLibaries: object = vscode.workspace.getConfiguration().get("python-help-fetcher.additionalLibraryDocsMappings") ?? {};
+                    const additionalLibaries: object = vscode.workspace.getConfiguration().get("python-docs-fetcher.additionalLibraryDocsMappings") ?? {};
                     
                     webpage = getWebPageFromSymbolUsingSettings(symbolAtPosition, additionalLibaries);
 

@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import { HelpFetcher, getPythonWebPageFromSymbol } from '../../internals';
-import * as fs_p from "fs/promises";
+import * as fsPromise from "fs/promises";
 import path = require('path');
 import os = require('os');
 
@@ -9,9 +9,9 @@ describe("symbol fetching", () => {
     let helpFetcher: HelpFetcher;
 
     async function getWebpageFromString(str: string, line: number, column: number): Promise<string | null> {
-        const tempFolder = await fs_p.mkdtemp(path.join(os.tmpdir(), "getWebpageFromString"));
+        const tempFolder = await fsPromise.mkdtemp(path.join(os.tmpdir(), "getWebpageFromString"));
         const testFile = path.join(tempFolder, "testFile");
-        await fs_p.writeFile(testFile, str);
+        await fsPromise.writeFile(testFile, str);
         
         const functionAtPosition = await helpFetcher.getFunctionAtPosition(testFile, line, column);
         console.log(`Found function ${functionAtPosition}`)
