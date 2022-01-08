@@ -28,12 +28,17 @@ def get_function_at_position(file: str, line: int, column: int, python_executabl
     if len(infered_function_names) == 0:
         return None
 
-    assert len(infered_function_names) == 1, f"{infered_function_names} = infered_function_names"
+    # Just take the first entry (if there's multiple entries here, hope the first one might provide some use)
     infered_function_name: Name = infered_function_names[0]
 
-    assert infered_function_name.full_name is not None
+    if infered_function_name.full_name is None:
+        if infered_function_name.name.startswith("__"):
+            return f"__import_system__.{infered_function_name.name}"
+        else:
+            return None
 
     return infered_function_name.full_name
+
 
 def entrypoint():
     for input_str in sys.stdin:
@@ -59,6 +64,7 @@ def entrypoint():
 
 """
 {"line": 42, "column": 7, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py", "pythonExecutable": "/home/thomas/Documents/python-help-fetcher/my/test-folder/venv/bin/python"}
+{"line": 44, "column": 4, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py", "pythonExecutable": "/home/thomas/Documents/python-help-fetcher/my/test-folder/venv/bin/python"}
 """
 # test: {"line": 23, "column": 17, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py"}
 # test: {"line": 1, "column": 1, "file": "/home/thomas/Documents/python-help-fetcher/my/test-folder/test.py"}

@@ -123,8 +123,12 @@ const SUBMODULES_WITH_SEPARATE_PAGES = [
 
 function getSpecialCaseMapping(originalSymbol: string) {
     const symbol_parts = originalSymbol.split(".");
+    const lastSymbolPart = symbol_parts[symbol_parts.length - 1];
 
-    if (originalSymbol.startsWith("typing.IO")){
+    if (symbol_parts[0] == "__import_system__") {
+        return `https://docs.python.org/3/reference/import.html#${symbol_parts[1].slice(2)}`
+    }
+    else if (originalSymbol.startsWith("typing.IO")){
         if ((new Set(["readinto", "read", "readall", "write"])).has(symbol_parts[2])){
             return `https://docs.python.org/3/library/io.html#io.RawIOBase.${symbol_parts[2]}`
         }
@@ -148,6 +152,14 @@ function getSpecialCaseMapping(originalSymbol: string) {
         // `set` shares a section with `frozenset`, which is called `frozenset`
         return `https://docs.python.org/3/library/stdtypes.html#frozenset.${symbol_parts[2]}`
     }
+    else if (lastSymbolPart.startsWith("__") && lastSymbolPart.endsWith("__")) {
+        if ((new Set(["__instancecheck__", "__subclasscheck__"]).has(lastSymbolPart))){
+            return `https://docs.python.org/3/reference/datamodel.html#class.${lastSymbolPart}`
+        }
+        else{
+            return `https://docs.python.org/3/reference/datamodel.html#object.${lastSymbolPart}`
+        }
+    }
     
     return null;
 }
@@ -158,6 +170,7 @@ export function getPythonWebPageFromSymbol(symbol_name: string) {
      * 
      * @returns A string of the webpage if one can be found, otherwise `null`.
      */
+
     const specialCaseMapping = getSpecialCaseMapping(symbol_name);
     if (specialCaseMapping){
         return specialCaseMapping

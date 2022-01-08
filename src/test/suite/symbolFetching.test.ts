@@ -61,4 +61,16 @@ describe("symbol fetching", () => {
     it("unittest.mock", async () => {
         assert.strictEqual(await getWebpageFromString("from unittest import mock; mock.Mock", 1, 34), "https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock");
     })
+
+    it("__file__", async () => {
+        assert.strictEqual(await getWebpageFromString("__file__", 1, 4), "https://docs.python.org/3/reference/import.html#file__");
+    })
+
+    it("class.__instancecheck__", async () => {
+        assert.strictEqual(await getWebpageFromString("class X:pass;\nX.__instancecheck__", 2, 3), "https://docs.python.org/3/reference/datamodel.html#class.__instancecheck__");
+    })
+
+    it("object.__lt__", async () => {
+        assert.strictEqual(await getWebpageFromString("x = 3;x.__lt__", 1, 10), "https://docs.python.org/3/reference/datamodel.html#object.__lt__");
+    })
 }).timeout(10_000)
