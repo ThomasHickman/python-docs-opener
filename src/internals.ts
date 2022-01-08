@@ -9,15 +9,25 @@ const PYTHON_SCRIPT = path.join(path.dirname(__dirname), "static", "get_function
 export class HelpFetcher {
     private fetcherProcess: child_process.ChildProcessWithoutNullStreams;
     private readlineInterface: readline.Interface;
+
+    private inErrorReporting = false;
+    private errorReportingBuffer = "";
+
     constructor(pythonExecutable: string) {
         this.fetcherProcess = child_process.spawn(pythonExecutable, [PYTHON_SCRIPT]);
         this.readlineInterface = readline.createInterface({input: this.fetcherProcess.stdout, output: this.fetcherProcess.stdin});
         
-        // TODO: maybe report stderr here?
-        // const fetcherProcessStderrInterface = readline.createInterface({input: this.fetcherProcess.stderr});
-        // fetcherProcessStderrInterface.on("line", line => {
-        //     logs.append("stderr: " + line);
-        // });
+        const fetcherProcessStderrInterface = readline.createInterface({input: this.fetcherProcess.stderr});
+        fetcherProcessStderrInterface.on("line", line => {
+            this.errorReportingBuffer += line + "\n";
+            if (!this.inErrorReporting){
+                this.inErrorReporting = true;
+                setTimeout(() => {
+                    vscode.window.showWarningMessage(this.errorReportingBuffer);
+                    this.inErrorReporting = false;
+                }, 100)
+            }
+        });
     }
 
     public destroy() {
