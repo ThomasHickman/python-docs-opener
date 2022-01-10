@@ -79,7 +79,7 @@ export function getWebPageFromSymbolUsingSettings(symbol_name: string, setting_o
 // TODO: hard coding this is a bit hacky - we might be able to do this automatically by scraping the list of module pages
 const SPECIAL_CASE_PAGES = new Map([
     ["xml.parsers.expat", "pyexpat"],
-    ["urllib.response", "urllib.request"]
+    ["urllib.response", "urllib.request"],
 ]);
 
 const SUBMODULES_WITH_SEPARATE_PAGES = [
@@ -120,6 +120,34 @@ const SUBMODULES_WITH_SEPARATE_PAGES = [
     "unittest.mock"
 ]
 
+const ABC_CLASSES = new Set([
+    "AsyncGenerator",
+    "AsyncIterable",
+    "AsyncIterator",
+    "Awaitable",
+    "ByteString",
+    "Callable",
+    "Collection",
+    "Container",
+    "Coroutine",
+    "Generator",
+    "Hashable",
+    "ItemsView",
+    "Iterable",
+    "Iterator",
+    "KeysView",
+    "Mapping",
+    "MappingView",
+    "MutableMapping",
+    "MutableSequence",
+    "MutableSet",
+    "Reversible",
+    "Sequence",
+    "Set",
+    "Sized",
+    "ValuesView",
+])
+
 function getSpecialCaseMapping(originalSymbol: string) {
     const symbolParts = originalSymbol.split(".");
     const lastSymbolPart = symbolParts[symbolParts.length - 1];
@@ -127,7 +155,7 @@ function getSpecialCaseMapping(originalSymbol: string) {
     if (symbolParts[0] == "__import_system__") {
         return `https://docs.python.org/3/reference/import.html#${symbolParts[1].slice(2)}`
     }
-    else if (originalSymbol.startsWith("typing.IO")){
+    else if (originalSymbol.startsWith("typing.IO.")){
         if ((new Set(["readinto", "read", "readall", "write"])).has(symbolParts[2])){
             return `https://docs.python.org/3/library/io.html#io.RawIOBase.${symbolParts[2]}`
         }
@@ -141,15 +169,21 @@ function getSpecialCaseMapping(originalSymbol: string) {
             return `https://docs.python.org/3/library/io.html#io.IOBase.${symbolParts[2]}`
         }
     }
-    else if (originalSymbol.startsWith("builtins.list")){
+    else if (originalSymbol.startsWith("builtins.list.")){
         return "https://docs.python.org/3/tutorial/datastructures.html#more-on-lists"
     }
-    else if (originalSymbol.startsWith("builtins.tuple") || originalSymbol.startsWith("builtins.range")){
+    else if (originalSymbol.startsWith("builtins.tuple.") || originalSymbol.startsWith("builtins.range")){
         return "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations"
     }
-    else if (originalSymbol.startsWith("builtins.set")){
+    else if (originalSymbol.startsWith("builtins.set.")){
         // `set` shares a section with `frozenset`, which is called `frozenset`
         return `https://docs.python.org/3/library/stdtypes.html#frozenset.${symbolParts[2]}`
+    }
+    else if (symbolParts[0] == "typing" && symbolParts.length >= 2 && ABC_CLASSES.has(symbolParts[1])){
+        return `https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes`
+    }
+    else if (originalSymbol.startsWith("collections.abc.") && symbolParts.length >= 3 && ABC_CLASSES.has(symbolParts[2])){
+        return `https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes`
     }
     else if (lastSymbolPart.startsWith("__") && lastSymbolPart.endsWith("__")) {
         if ((new Set(["__instancecheck__", "__subclasscheck__"]).has(lastSymbolPart))){

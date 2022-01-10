@@ -73,4 +73,8 @@ describe("symbol fetching", () => {
     it("object.__lt__", async () => {
         assert.strictEqual(await getWebpageFromString("x = 3;x.__lt__", 1, 10), "https://docs.python.org/3/reference/datamodel.html#object.__lt__");
     })
+
+    it("Mapping.get", async () => {
+        assert.strictEqual(await getWebpageFromString("{}.get", 1, 4), "https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes");
+    })
 }).timeout(10_000)
