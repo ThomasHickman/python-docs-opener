@@ -126,6 +126,7 @@ export const builtInModules = new Set([
     "py_compile",
     "pyclbr",
     "pydoc",
+    "pyexpat",
     "queue",
     "quopri",
     "random",

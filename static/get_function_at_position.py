@@ -28,8 +28,13 @@ def get_function_at_position(file: str, line: int, column: int, python_executabl
     if len(infered_function_names) == 0:
         return None
 
-    # Just take the first entry (if there's multiple entries here, hope the first one might provide some use)
-    infered_function_name: Name = infered_function_names[0]
+    # Handle a special case of `typing.IO` names
+    typing_io_names = [name for name in infered_function_names if name.full_name is not None and name.full_name.startswith("typing.IO")]
+    if len(typing_io_names) == 1:
+        infered_function_name: Name = typing_io_names[0]
+    else:
+        # Just take the first entry (if there's multiple entries here, hope the first one might provide some use)
+        infered_function_name: Name = infered_function_names[0]
 
     if infered_function_name.full_name is None:
         if infered_function_name.name.startswith("__"):

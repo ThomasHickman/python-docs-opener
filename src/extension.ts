@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
-import {getPythonWebPageFromSymbol, getWebPageFromSymbolUsingSettings, HelpFetcher} from "./internals";
+import {getWebPageFromSymbolUsingSettings, HelpFetcher} from "./internals";
 import * as fsPromise from "fs/promises";
 import * as fs from "fs";
 import * as path from "path";
 import * as child_process from "child_process"
+import { getPythonWebPageFromSymbol } from "./getPythonWebPageFromSymbol";
 
 let helpFetcherPromise: Promise<HelpFetcher>;
 

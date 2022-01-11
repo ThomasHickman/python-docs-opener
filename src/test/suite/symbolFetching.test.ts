@@ -1,8 +1,9 @@
 import * as assert from 'assert';
-import { HelpFetcher, getPythonWebPageFromSymbol } from '../../internals';
+import { HelpFetcher } from '../../internals';
 import * as fsPromise from "fs/promises";
 import path = require('path');
 import os = require('os');
+import { getPythonWebPageFromSymbol } from '../../getPythonWebPageFromSymbol';
 
 
 describe("symbol fetching", () => {
@@ -77,4 +78,25 @@ describe("symbol fetching", () => {
     it("Mapping.get", async () => {
         assert.strictEqual(await getWebpageFromString("{}.get", 1, 4), "https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes");
     })
+
+    it("list", async () => {
+        assert.strictEqual(await getWebpageFromString("list", 1, 2), "https://docs.python.org/3/library/stdtypes.html#list");
+    })
+
+    it("warnings.warn", async () => {
+        assert.strictEqual(await getWebpageFromString("import warnings;warnings.warn", 1, 27), "https://docs.python.org/3/library/warnings.html#warnings.warn");
+    })
+
+    it("DeprecationWarning", async () => {
+        assert.strictEqual(await getWebpageFromString("DeprecationWarning", 1, 6), "https://docs.python.org/3/library/exceptions.html#DeprecationWarning");
+    })
+
+    it("os.environ.get", async () => {
+        assert.strictEqual(await getWebpageFromString("import os;os.environ.get", 1, 23), "https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes");
+    })
+
+    it("typing.Optional", async () => {
+        assert.strictEqual(await getWebpageFromString("import typing;typing.Optional", 1, 24), "https://docs.python.org/3/library/typing.html#typing.Optional");
+    })
+
 }).timeout(10_000)
