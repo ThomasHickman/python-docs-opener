@@ -61,7 +61,7 @@ export async function getPythonExecutableWithJedi(venvFolder: string): Promise<s
 
         const virtualEnvProcess = await runProcess(pythonCommand, ["-m", "virtualenv", venvFolder]);
         if (virtualEnvProcess.exitCode != 0) {
-            const errorMessage = `Creating a virtualenv failed. stderr: ${virtualEnvProcess.stderr?.read()}`;
+            const errorMessage = `Creating a virtualenv failed. Make sure you have installed virtualenv. stderr: ${virtualEnvProcess.stderr?.read()}`;
 
             vscode.window.showErrorMessage(errorMessage);
             throw Error(errorMessage);
@@ -119,8 +119,7 @@ export function activate(context: vscode.ExtensionContext) {
             );
             if (!symbolAtPosition){
                 vscode.window.showWarningMessage(
-                    `Unable to get the documentation for the selected symbol. ` + 
-                    `Please check the input file for errors.`
+                    `Unable to get the documentation at the selected position. Symbol name could not be resolved.`
                 );
 
                 return;
