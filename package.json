@@ -7,6 +7,12 @@
   "engines": {
     "vscode": "^1.61.0"
   },
+  "publisher": "ThomasHickman",
+  "author": {
+    "name": "ThomasHickman",
+    "url": "https://www.tkhickman.com"
+  },
+  "license": "MIT",
   "categories": [
     "Programming Languages",
     "Other"
