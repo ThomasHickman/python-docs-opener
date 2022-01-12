@@ -1,6 +1,6 @@
 {
-  "name": "python-docs-fetcher",
-  "displayName": "Python Docs Fetcher",
+  "name": "python-docs-opener",
+  "displayName": "Python Docs Opener",
   "description": "Open documentation for the current symbol under the cursor in the default web browser",
   "version": "0.3.1",
   "engines": {
@@ -12,28 +12,28 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ThomasHickman/python-docs-fetcher.git"
+    "url": "https://github.com/ThomasHickman/python-docs-opener.git"
   },
-  "homepage": "https://github.com/ThomasHickman/python-docs-fetcher",
+  "homepage": "https://github.com/ThomasHickman/python-docs-opener",
   "keywords": [
     "Python",
     "Documentation",
     "Browser"
   ],
   "activationEvents": [
-    "onCommand:pythonDocsFetcher.getDocsOfSymbol"
+    "onCommand:pythonDocsOpener.getDocsOfSymbol"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "pythonDocsFetcher.getDocsOfSymbol",
-        "title": "Python Docs Fetcher: Open Documentation of Symbol in Browser Window"
+        "command": "pythonDocsOpener.getDocsOfSymbol",
+        "title": "Python Docs Opener: Open Documentation of Symbol in Browser Window"
       }
     ],
     "keybindings": [
       {
-        "command": "pythonDocsFetcher.getDocsOfSymbol",
+        "command": "pythonDocsOpener.getDocsOfSymbol",
         "key": "shift+f1",
         "mac": "shift+f1",
         "when": "editorTextFocus"
@@ -45,9 +45,9 @@
       "out"
     ],
     "configuration": {
-      "title": "Python Docs Fetcher",
+      "title": "Python Docs Opener",
       "properties": {
-        "pythonDocsFetcher.additionalLibraryToDocsMappings": {
+        "pythonDocsOpener.additionalLibraryToDocsMappings": {
           "type": "object",
           "additionalProperties": {
             "type": "string"

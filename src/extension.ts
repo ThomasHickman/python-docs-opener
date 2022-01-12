@@ -100,7 +100,7 @@ async function getHelpFetcher(context: vscode.ExtensionContext){
 export function activate(context: vscode.ExtensionContext) {
     helpFetcherPromise = getHelpFetcher(context);
 
-    let disposable = vscode.commands.registerCommand('pythonDocsFetcher.getDocsOfSymbol', async () => {
+    let disposable = vscode.commands.registerCommand('pythonDocsOpener.getDocsOfSymbol', async () => {
         const editor = vscode.window.activeTextEditor;
         const helpFetcher = await helpFetcherPromise;
 
@@ -128,7 +128,7 @@ export function activate(context: vscode.ExtensionContext) {
                 let webpage = getPythonWebPageFromSymbol(symbolAtPosition);
 
                 if (!webpage){
-                    const additionalLibaries: object = vscode.workspace.getConfiguration().get("pythonDocsFetcher.additionalLibraryToDocsMappings") ?? {};
+                    const additionalLibaries: object = vscode.workspace.getConfiguration().get("pythonDocsOpener.additionalLibraryToDocsMappings") ?? {};
                     
                     webpage = getWebPageFromSymbolUsingSettings(symbolAtPosition, additionalLibaries);
 
