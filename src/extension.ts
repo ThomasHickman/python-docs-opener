@@ -135,7 +135,7 @@ export function activate(context: vscode.ExtensionContext) {
                     if (!webpage){
                         vscode.window.showWarningMessage(
                             `Unable to get the documentation for "${symbolAtPosition}". ` + 
-                            `Fetching documentation for the library that provides this symbol may not be supported.`
+                            `Check whether the symbol is in a built in Python module or is in \`pythonDocsOpener.additionalLibraryToDocsMappings\`.`
                         );
 
                         return;
