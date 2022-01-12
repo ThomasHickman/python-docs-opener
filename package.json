@@ -2,7 +2,7 @@
   "name": "python-docs-opener",
   "displayName": "Python Docs Opener",
   "description": "Open documentation for the current symbol under the cursor in the default web browser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "icon": "static/icon.png",
   "engines": {
     "vscode": "^1.61.0"
