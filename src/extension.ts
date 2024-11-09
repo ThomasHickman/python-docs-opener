@@ -48,14 +48,15 @@ export async function getPythonExecutableWithJedi(venvFolder: string): Promise<s
     else {
         // This should error with the exit code
         let pythonCommand: string;
+        let python3CheckCommand = await runProcess("python3", ["-c", "import sys; assert sys.version_info[0] == 3"]);
         if ((await runProcess("python", ["-c", "import sys; assert sys.version_info[0] == 3"])).exitCode == 0) {
             pythonCommand = "python";
         }
-        else if ((await runProcess("python3", ["-c", "import sys; assert sys.version_info[0] == 3"])).exitCode == 0) {
+        else if (python3CheckCommand.exitCode == 0) {
             pythonCommand = "python3";
         }
         else {
-            const errorMessage = `Cannot find a Python 3 executable. Check that you have Python 3 in your path.`;
+            const errorMessage = `Cannot find a Python 3 executable. Check that you have Python 3 in your path. ${python3CheckCommand.error}`;
 
             vscode.window.showErrorMessage(errorMessage);
             throw Error(errorMessage);
