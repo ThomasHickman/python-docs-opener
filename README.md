@@ -23,7 +23,8 @@ You can use the setting `additionalLibraryToDocsMappings` to specify documentati
 }
 ```
 
-## Running tests
+## Development
+### Running tests
 
 To run the tests, first create a virtual environment with `jedi~=0.18` installed it it:
 ```
