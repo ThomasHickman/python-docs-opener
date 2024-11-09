@@ -1,12 +1,13 @@
 import * as assert from 'assert';
-import { HelpFetcher } from '../../internals';
+import { HelpFetcher } from '../internals';
 import * as fsPromise from "fs/promises";
 import path = require('path');
 import os = require('os');
-import { getPythonWebPageFromSymbol } from '../../getPythonWebPageFromSymbol';
+import { getPythonWebPageFromSymbol } from '../getPythonWebPageFromSymbol';
 
 
-describe("symbol fetching", () => {
+
+suite("symbol fetching", () => {
     let helpFetcher: HelpFetcher;
 
     async function getWebpageFromString(str: string, line: number, column: number): Promise<string | null> {
@@ -23,79 +24,79 @@ describe("symbol fetching", () => {
             return null;
     }
 
-    beforeEach(async () => {
-        helpFetcher = new HelpFetcher(path.resolve(__dirname, "..", "..", "..", "venv", "bin", "python3"));
+    setup(async () => {
+        helpFetcher = new HelpFetcher(path.resolve(__dirname, "..", "..", "venv", "bin", "python3"));
     })
 
-    it("open", async () => {
+    test("open", async () => {
         assert.strictEqual(await getWebpageFromString("open", 1, 2), "https://docs.python.org/3/library/functions.html#open");
     })
 
-    it("sys.executable", async () => {
+    test("sys.executable", async () => {
         assert.strictEqual(await getWebpageFromString("import sys;sys.executable", 1, 18), "https://docs.python.org/3/library/sys.html#sys.executable");
     })
     
-    it("capitalize", async () => {    
+    test("capitalize", async () => {    
         assert.strictEqual(await getWebpageFromString("''.capitalize", 1, 5), "https://docs.python.org/3/library/stdtypes.html#str.capitalize");
     })
 
-    it("sys.stdout", async () => {
+    test("sys.stdout", async () => {
         assert.strictEqual(await getWebpageFromString("import sys;sys.stdout", 1, 17), "https://docs.python.org/3/library/sys.html#sys.stdout");
     })
 
-    it("List.insert", async () => {
+    test("List.insert", async () => {
         assert.strictEqual(await getWebpageFromString("[].insert", 1, 5), "https://docs.python.org/3/tutorial/datastructures.html#more-on-lists");
     })
 
-    it("Tuple.count", async () => {
+    test("Tuple.count", async () => {
         assert.strictEqual(await getWebpageFromString("().count", 1, 5), "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations");
     })
 
-    it("Set.update", async () => {
+    test("Set.update", async () => {
         assert.strictEqual(await getWebpageFromString("set().update", 1, 8), "https://docs.python.org/3/library/stdtypes.html#frozenset.update");
     })
 
-    it("IO.writelines", async () => {
+    test("IO.writelines", async () => {
         assert.strictEqual(await getWebpageFromString("open('file').writelines([])", 1, 15), "https://docs.python.org/3/library/io.html#io.IOBase.writelines");
     })
 
-    it("unittest.mock", async () => {
+    test("unittest.mock", async () => {
         assert.strictEqual(await getWebpageFromString("from unittest import mock; mock.Mock", 1, 34), "https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock");
     })
 
-    it("__file__", async () => {
+    test("__file__", async () => {
         assert.strictEqual(await getWebpageFromString("__file__", 1, 4), "https://docs.python.org/3/reference/import.html#file__");
     })
 
-    it("class.__instancecheck__", async () => {
+    test("class.__instancecheck__", async () => {
         assert.strictEqual(await getWebpageFromString("class X:pass;\nX.__instancecheck__", 2, 3), "https://docs.python.org/3/reference/datamodel.html#class.__instancecheck__");
     })
 
-    it("object.__lt__", async () => {
+    test("object.__lt__", async () => {
         assert.strictEqual(await getWebpageFromString("x = 3;x.__lt__", 1, 10), "https://docs.python.org/3/reference/datamodel.html#object.__lt__");
     })
 
-    it("Mapping.get", async () => {
+    test("Mapping.get", async () => {
         assert.strictEqual(await getWebpageFromString("{}.get", 1, 4), "https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes");
     })
 
-    it("list", async () => {
+    test("list", async () => {
         assert.strictEqual(await getWebpageFromString("list", 1, 2), "https://docs.python.org/3/library/stdtypes.html#list");
     })
 
-    it("warnings.warn", async () => {
+    test("warnings.warn", async () => {
         assert.strictEqual(await getWebpageFromString("import warnings;warnings.warn", 1, 27), "https://docs.python.org/3/library/warnings.html#warnings.warn");
     })
 
-    it("DeprecationWarning", async () => {
+    test("DeprecationWarning", async () => {
         assert.strictEqual(await getWebpageFromString("DeprecationWarning", 1, 6), "https://docs.python.org/3/library/exceptions.html#DeprecationWarning");
     })
 
-    it("os.environ.get", async () => {
+    test("os.environ.get", async () => {
         assert.strictEqual(await getWebpageFromString("import os;os.environ.get", 1, 23), "https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes");
     })
 
-    it("typing.Optional", async () => {
+    test("typing.Optional", async () => {
         assert.strictEqual(await getWebpageFromString("import typing;typing.Optional", 1, 24), "https://docs.python.org/3/library/typing.html#typing.Optional");
     })
 

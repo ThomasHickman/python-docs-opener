@@ -22,3 +22,25 @@ You can use the setting `additionalLibraryToDocsMappings` to specify documentati
     "pytest": "https://docs.pytest.org/en/6.2.x/reference.html#${symbol_name}"
 }
 ```
+
+## Running tests
+
+To run the tests, first create a virtual environment with `jedi~=0.18` installed it it:
+```
+$ virtualenv venv
+created virtual environment CPython3.12.5.final.0-64 in 116ms
+  creator CPython3Posix(dest=/home/user/python-docs-opener/venv, clear=False, no_vcs_ignore=False, global=False)
+  seeder FromAppData(download=False, pip=bundle, via=copy, app_data_dir=/home/user/.local/share/virtualenv)
+    added seed packages: pip==24.0
+  activators BashActivator,CShellActivator,FishActivator,NushellActivator,PowerShellActivator,PythonActivator
+$ pip install jedi~=0.18
+Collecting jedi~=0.18
+  Using cached jedi-0.19.1-py2.py3-none-any.whl.metadata (22 kB)
+Collecting parso<0.9.0,>=0.8.3 (from jedi~=0.18)
+  Using cached parso-0.8.4-py2.py3-none-any.whl.metadata (7.7 kB)
+Using cached jedi-0.19.1-py2.py3-none-any.whl (1.6 MB)
+Using cached parso-0.8.4-py2.py3-none-any.whl (103 kB)
+Installing collected packages: parso, jedi
+Successfully installed jedi-0.19.1 parso-0.8.4
+```
+Then run `npm test`
